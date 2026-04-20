@@ -2,9 +2,9 @@ import type {Metadata, Viewport} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Kalkulator Godzin',
-  description: 'Oblicz ilość czasu między dwoma określonymi godzinami.',
-  manifest: '/manifest.json',
+  title: 'Kalkulator',
+  description: 'Prosty kalkulator czasu pracy.',
+  manifest: './manifest.json',
 };
 
 export const viewport: Viewport = {
@@ -19,9 +19,9 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="pl">
       <head>
-        <link rel="manifest" href="/manifest.json" />
+        <link rel="manifest" href="./manifest.json" />
         <meta name="theme-color" content="#2563eb" />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link rel="apple-touch-icon" href="./icon-192.png" />
       </head>
       <body suppressHydrationWarning>
         {children}
@@ -30,7 +30,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                  navigator.serviceWorker.register('./sw.js').then(function(registration) {
                     console.log('ServiceWorker registration successful');
                   }, function(err) {
                     console.log('ServiceWorker registration failed: ', err);

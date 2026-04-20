@@ -146,12 +146,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-[#1a1a1a] p-4 md:p-8 font-sans selection:bg-blue-100 pb-24">
-      <div className="max-w-[700px] mx-auto pt-4 md:pt-10">
+      <div className="max-w-[700px] mx-auto pt-6 md:pt-12">
         <div className="mb-10 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-2xl mb-4 shadow-lg shadow-blue-200">
-            <Clock className="w-6 h-6" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 text-[#111]">Kalkulator Godzin</h1>
+          <h1 className="text-4xl font-black tracking-tight mb-2 text-[#111]">Kalkulator</h1>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 md:p-10 mb-8 overflow-hidden relative">
