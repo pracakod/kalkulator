@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   output: 'export',
+  distDir: 'out',
   basePath: process.env.NODE_ENV === 'production' ? '/kalkulator' : '',
   images: {
     unoptimized: true,

@@ -33,10 +33,12 @@ jobs:
         run: npm install
       - name: Build with Next.js
         run: npm run build
+      - name: List files (debug)
+        run: ls -R out
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: out
 
   deploy:
     environment:
