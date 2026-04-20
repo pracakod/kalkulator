@@ -1,0 +1,6 @@
+{
+  "name": "Kalkulator Godzin",
+  "description": "Oblicz ilość czasu między dwoma określonymi godzinami.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
