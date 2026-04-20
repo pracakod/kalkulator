@@ -1,8 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { Equal, X, Clock, Play, GraduationCap as Finish, Coffee, History } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Equal, X, Clock, Play, Coffee, History as HistoryIcon, Trash2, Smartphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+interface HistoryItem {
+  id: string;
+  start: string;
+  end: string;
+  break: string;
+  breakUnit: string;
+  result: string;
+  timestamp: number;
+}
 
 export default function Home() {
   const [startTime, setStartTime] = useState('08:00');
@@ -10,6 +20,24 @@ export default function Home() {
   const [breakTime, setBreakTime] = useState('0');
   const [breakUnit, setBreakUnit] = useState('minutes');
   const [result, setResult] = useState<{ timeFormatted: string; totalMinutes: number } | null>(null);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+
+  // Load history from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('calc_history');
+    if (saved) {
+      try {
+        setHistory(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to parse history', e);
+      }
+    }
+  }, []);
+
+  // Save history to localStorage
+  useEffect(() => {
+    localStorage.setItem('calc_history', JSON.stringify(history));
+  }, [history]);
 
   const setCurrentTime = (setter: (val: string) => void) => {
     const now = new Date();
@@ -60,6 +88,7 @@ export default function Home() {
     const startTotalMins = parseTimeToMinutes(startTime);
     let endTotalMins = parseTimeToMinutes(endTime);
 
+    // Cross-day shift logic (08:00 to 07:00 next day)
     if (endTotalMins < startTotalMins) {
       endTotalMins += 24 * 60;
     }
@@ -75,10 +104,24 @@ export default function Home() {
     const hours = Math.floor(totalMins / 60);
     const mins = Math.round(totalMins % 60);
 
+    const timeFormatted = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+    
     setResult({
-      timeFormatted: `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`,
+      timeFormatted,
       totalMinutes: Math.round(totalMins),
     });
+
+    // Add to history
+    const newItem: HistoryItem = {
+      id: Date.now().toString(),
+      start: formatTimeStr(startTime),
+      end: formatTimeStr(endTime),
+      break: breakTime,
+      breakUnit,
+      result: timeFormatted,
+      timestamp: Date.now(),
+    };
+    setHistory((prev) => [newItem, ...prev.slice(0, 9)]);
 
     setStartTime(formatTimeStr(startTime));
     setEndTime(formatTimeStr(endTime));
@@ -91,27 +134,34 @@ export default function Home() {
     setResult(null);
   };
 
+  const removeHistoryItem = (id: string) => {
+    setHistory((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const clearHistory = () => {
+    if (confirm('Czy na pewno chcesz wyczyścić całą historię?')) {
+      setHistory([]);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#fafafa] text-[#1a1a1a] p-4 md:p-8 font-sans selection:bg-blue-100">
-      <div className="max-w-[700px] mx-auto pt-10 md:pt-20">
-        <div className="mb-10 text-center md:text-left">
+    <div className="min-h-screen bg-[#fafafa] text-[#1a1a1a] p-4 md:p-8 font-sans selection:bg-blue-100 pb-24">
+      <div className="max-w-[700px] mx-auto pt-4 md:pt-10">
+        <div className="mb-10 text-center">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-2xl mb-4 shadow-lg shadow-blue-200">
             <Clock className="w-6 h-6" />
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-3 text-[#111]">Kalkulator Godzin</h1>
-          <p className="text-slate-500 text-lg max-w-md">
-            Szybkie i precyzyjne obliczanie czasu pracy. Wystarczy podać godziny i ewentualną przerwę.
-          </p>
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 text-[#111]">Kalkulator Godzin</h1>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 md:p-10 mb-8 overflow-hidden relative">
           <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-10">
             {/* Start Time */}
             <div>
-              <label className="flex items-center text-sm font-semibold mb-2.5 text-slate-700 uppercase tracking-wider">
-                <Play className="w-4 h-4 mr-2 text-blue-500 fill-blue-500" /> Czas rozpoczęcia
+              <label className="flex items-center text-xs font-bold mb-2.5 text-slate-500 uppercase tracking-widest">
+                <Play className="w-4 h-4 mr-2 text-blue-500 fill-blue-500" /> Rozpoczęcie
               </label>
               <div className="relative group">
                 <input
@@ -125,7 +175,7 @@ export default function Home() {
                 />
                 <button
                   onClick={() => setCurrentTime(setStartTime)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-2.5 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-2.5 py-1.5 rounded-lg active:scale-95 transition-all"
                 >
                   TERAZ
                 </button>
@@ -134,8 +184,8 @@ export default function Home() {
 
             {/* End Time */}
             <div>
-              <label className="flex items-center text-sm font-semibold mb-2.5 text-slate-700 uppercase tracking-wider">
-                <History className="w-4 h-4 mr-2 text-indigo-500" /> Czas zakończenia
+              <label className="flex items-center text-xs font-bold mb-2.5 text-slate-500 uppercase tracking-widest">
+                <HistoryIcon className="w-4 h-4 mr-2 text-indigo-500" /> Zakończenie
               </label>
               <div className="relative group">
                 <input
@@ -149,7 +199,7 @@ export default function Home() {
                 />
                 <button
                   onClick={() => setCurrentTime(setEndTime)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-2.5 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-2.5 py-1.5 rounded-lg active:scale-95 transition-all"
                 >
                   TERAZ
                 </button>
@@ -159,7 +209,7 @@ export default function Home() {
 
           {/* Break Time */}
           <div className="mb-10 bg-slate-50/50 p-6 rounded-2xl border border-slate-100">
-            <label className="flex items-center text-sm font-semibold mb-4 text-slate-700 uppercase tracking-wider">
+            <label className="flex items-center text-xs font-bold mb-4 text-slate-500 uppercase tracking-widest">
               <Coffee className="w-4 h-4 mr-2 text-orange-500" /> Czas przerwy
             </label>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -181,44 +231,44 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Buttons */}
+          {/* Main Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={calculate}
-              className="flex-[2] h-16 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl flex items-center justify-center text-lg font-bold transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-200"
+              className="flex-[2] h-16 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-2xl flex items-center justify-center text-lg font-bold transition-all shadow-lg shadow-blue-200"
             >
               <Equal className="w-5 h-5 mr-2 stroke-[3]" /> Oblicz czas
             </button>
             <button
               onClick={clear}
-              className="flex-1 h-16 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl flex items-center justify-center text-lg font-bold transition-all"
+              className="flex-1 h-16 bg-slate-100 hover:bg-slate-200 active:scale-[0.98] text-slate-600 rounded-2xl flex items-center justify-center text-lg font-bold transition-all"
             >
               <X className="w-5 h-5 mr-2 stroke-[3]" /> Wyczyść
             </button>
           </div>
 
-          {/* Result Section */}
+          {/* Active Result */}
           {result && (
-            <div className="mt-12 p-8 bg-blue-50/50 rounded-3xl border border-blue-100 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Clock className="w-20 h-20 text-blue-600" />
+            <div className="mt-12 p-8 bg-blue-600 rounded-3xl text-white relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="absolute top-0 right-0 p-3 opacity-10">
+                <Clock className="w-24 h-24" />
               </div>
               <div className="relative z-10">
-                <h3 className="text-sm font-bold text-blue-600 uppercase tracking-[0.2em] mb-6">
-                  Wynik obliczeń
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em] mb-6 opacity-80">
+                  Aktualny Wynik
                 </h3>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-center sm:text-left">
                   <div>
-                    <div className="text-slate-500 text-sm font-medium mb-1">Format czasu</div>
-                    <div className="text-4xl font-black text-slate-900 tabular-nums">
-                      {result.timeFormatted} <span className="text-xl font-medium text-slate-400">h</span>
+                    <div className="text-blue-100 text-xs font-semibold mb-1 uppercase">Format czasu</div>
+                    <div className="text-5xl font-black tabular-nums">
+                      {result.timeFormatted} <span className="text-2xl font-light">h</span>
                     </div>
                   </div>
-                  <div>
-                    <div className="text-slate-500 text-sm font-medium mb-1">Łącznie minut</div>
-                    <div className="text-4xl font-black text-slate-900 tabular-nums">
-                      {result.totalMinutes} <span className="text-xl font-medium text-slate-400">min</span>
+                  <div className="sm:border-l sm:border-white/20 sm:pl-8">
+                    <div className="text-blue-100 text-xs font-semibold mb-1 uppercase">Łącznie minut</div>
+                    <div className="text-5xl font-black tabular-nums">
+                      {result.totalMinutes} <span className="text-2xl font-light">min</span>
                     </div>
                   </div>
                 </div>
@@ -227,9 +277,64 @@ export default function Home() {
           )}
         </div>
 
-        <div className="text-center text-slate-400 text-sm mt-12 pb-10">
-          <p>© 2024 Kalkulator Godzin • Precyzyjne narzędzie do planowania czasu</p>
-        </div>
+        {/* History Section */}
+        {history.length > 0 && (
+          <div className="mt-12 animate-in fade-in duration-700">
+            <div className="flex items-center justify-between mb-6 px-4">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-slate-200 rounded-lg flex items-center justify-center mr-3">
+                  <HistoryIcon className="w-4 h-4 text-slate-600" />
+                </div>
+                <h2 className="text-xl font-bold text-slate-800">Ostatnie wyniki</h2>
+              </div>
+              <button 
+                onClick={clearHistory}
+                className="text-sm font-semibold text-slate-400 hover:text-red-500 flex items-center transition-colors"
+              >
+                <Trash2 className="w-4 h-4 mr-1" /> Wyczyść
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {history.map((item) => (
+                <div 
+                  key={item.id}
+                  className="bg-white border border-slate-100 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:border-blue-100 transition-all"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="text-xs font-bold text-slate-400 w-12 hidden sm:block">
+                      {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                    <div>
+                      <div className="flex items-center text-sm font-medium text-slate-600">
+                        <span>{item.start}</span>
+                        <X className="w-3 h-3 mx-2 rotate-45 text-slate-300" />
+                        <span>{item.end}</span>
+                        {parseFloat(item.break) > 0 && (
+                          <span className="ml-2 text-[10px] bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded-full font-bold">
+                            -{item.break}{item.breakUnit === 'minutes' ? 'min' : 'h'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-lg font-bold text-blue-600">
+                      {item.result}
+                    </div>
+                    <button 
+                      onClick={() => removeHistoryItem(item.id)}
+                      className="text-slate-300 hover:text-red-400 p-1"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
