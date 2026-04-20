@@ -171,11 +171,11 @@ export default function Home() {
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value.replace(/[^0-9:]/g, ''))}
                   onBlur={() => setStartTime(formatTimeStr(startTime))}
-                  className="w-full h-14 bg-slate-50 border border-slate-200 rounded-xl px-4 text-lg font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                  className="w-full h-14 bg-slate-50 border border-slate-200 rounded-xl px-4 text-lg font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all pr-20"
                 />
                 <button
                   onClick={() => setCurrentTime(setStartTime)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-2.5 py-1.5 rounded-lg active:scale-95 transition-all"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-2 rounded-lg active:scale-95 transition-all md:opacity-0 md:group-hover:opacity-100"
                 >
                   TERAZ
                 </button>
@@ -195,11 +195,11 @@ export default function Home() {
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value.replace(/[^0-9:]/g, ''))}
                   onBlur={() => setEndTime(formatTimeStr(endTime))}
-                  className="w-full h-14 bg-slate-50 border border-slate-200 rounded-xl px-4 text-lg font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                  className="w-full h-14 bg-slate-50 border border-slate-200 rounded-xl px-4 text-lg font-medium focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all pr-20"
                 />
                 <button
                   onClick={() => setCurrentTime(setEndTime)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-2.5 py-1.5 rounded-lg active:scale-95 transition-all"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-indigo-600 bg-indigo-50 px-3 py-2 rounded-lg active:scale-95 transition-all md:opacity-0 md:group-hover:opacity-100"
                 >
                   TERAZ
                 </button>
@@ -208,7 +208,7 @@ export default function Home() {
           </div>
 
           {/* Break Time */}
-          <div className="mb-10 bg-slate-50/50 p-6 rounded-2xl border border-slate-100">
+          <div className="mb-10 bg-slate-50/50 p-5 md:p-6 rounded-2xl border border-slate-100">
             <label className="flex items-center text-xs font-bold mb-4 text-slate-500 uppercase tracking-widest">
               <Coffee className="w-4 h-4 mr-2 text-orange-500" /> Czas przerwy
             </label>
@@ -235,13 +235,13 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={calculate}
-              className="flex-[2] h-16 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-2xl flex items-center justify-center text-lg font-bold transition-all shadow-lg shadow-blue-200"
+              className="flex-[2] min-h-[4rem] bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-2xl flex items-center justify-center text-lg font-bold transition-all shadow-lg shadow-blue-200"
             >
               <Equal className="w-5 h-5 mr-2 stroke-[3]" /> Oblicz czas
             </button>
             <button
               onClick={clear}
-              className="flex-1 h-16 bg-slate-100 hover:bg-slate-200 active:scale-[0.98] text-slate-600 rounded-2xl flex items-center justify-center text-lg font-bold transition-all"
+              className="flex-1 min-h-[4rem] bg-slate-100 hover:bg-slate-200 active:scale-[0.98] text-slate-600 rounded-2xl flex items-center justify-center text-lg font-bold transition-all"
             >
               <X className="w-5 h-5 mr-2 stroke-[3]" /> Wyczyść
             </button>
