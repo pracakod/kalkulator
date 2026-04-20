@@ -4,7 +4,7 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Kalkulator',
   description: 'Prosty kalkulator czasu pracy.',
-  manifest: './manifest.json',
+  manifest: './site.webmanifest',
 };
 
 export const viewport: Viewport = {
@@ -19,7 +19,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="pl">
       <head>
-        <link rel="manifest" href="./manifest.json" />
+        <link rel="manifest" href="./site.webmanifest" />
         <meta name="theme-color" content="#2563eb" />
         <link rel="icon" href="./icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="./icon.svg" />

@@ -1,8 +1,8 @@
-const CACHE_NAME = 'kalkulator-v2'; // Zmiana wersji wymusza odświeżenie
+const CACHE_NAME = 'kalkulator-v3'; // Zmiana wersji wymusza odświeżenie
 const urlsToCache = [
   './',
   './index.html',
-  './manifest.json',
+  './site.webmanifest',
   './icon.svg'
 ];
 
