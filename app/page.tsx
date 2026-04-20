@@ -212,12 +212,12 @@ export default function Home() {
                 min="0"
                 value={breakTime}
                 onChange={(e) => setBreakTime(e.target.value)}
-                className="flex-1 h-14 bg-white border border-slate-200 rounded-xl px-4 text-lg font-medium focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                className="flex-1 h-16 bg-white border border-slate-200 rounded-xl px-4 text-lg font-medium focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
               />
               <select
                 value={breakUnit}
                 onChange={(e) => setBreakUnit(e.target.value)}
-                className="sm:w-36 h-14 bg-white border border-slate-200 rounded-xl px-4 text-base font-semibold focus:border-blue-500 outline-none transition-all cursor-pointer"
+                className="sm:w-40 h-16 bg-white border border-slate-200 rounded-xl px-4 text-base font-semibold focus:border-blue-500 outline-none transition-all cursor-pointer"
               >
                 <option value="minutes">Minuty</option>
                 <option value="hours">Godziny</option>
